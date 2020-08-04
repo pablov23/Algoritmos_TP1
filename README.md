@@ -1,4 +1,4 @@
-# Algoritmos_TP1
+# Algoritmos TP 1
 
 # Parte 1:
 El objetivo de esta primera parte es poner en práctica el concepto de Estructuras de control de flujo de un
