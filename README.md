@@ -1,6 +1,6 @@
 # Algoritmos_TP1
 
-#Parte 1:
+# Parte 1:
 El objetivo de esta primera parte es poner en práctica el concepto de Estructuras de control de flujo de un
 programa (secuencia, análisis de caso y repetición), como asimismo trabajar con tipos de datos simples y
 estructurados (arrays), con expresiones lógicas, asignación interna y externa. También usaremos flujos
@@ -9,7 +9,7 @@ Vamos a desarrollar una aplicación para un sistema de delivery.
 Para la organización de las entregas la empresa divide la ciudad en 6 zonas numeradas del 1 al 6.
 
 
-#Ejercicio 1: Incorporación de repartidores
+# Ejercicio 1: Incorporación de repartidores
 Ingreso de personas que formarán parte del staff de repartidores de la empresa
 Se pide:
 1) Generar el archivo “Repartidores.dat” con un registro por cada repartidor que se presentó para el
@@ -23,7 +23,7 @@ Para realizar los puntos 2 y 3 utilizar estructuras de datos en memoria (arrays)
 generado.
 
 
-#Ejercicio 2: Incorporación de negocios
+# Ejercicio 2: Incorporación de negocios
 Los rubros de los negocios a los que presta servicio la empresa de delivery son Heladería, Pizzería, Bebidas,
 Parrilla.
 Se ingresan los datos de los negocios que quieren trabajar con la empresa.
