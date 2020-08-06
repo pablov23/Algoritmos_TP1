@@ -1,10 +1,7 @@
 #include <iostream>
-#include <string.h>
+#include<string.h>
 
 using namespace std;
-
-/*Por cada negocio se ingresa: Nombre de comercio, rubro y código de zona en la que se encuentra.
-Se admite un máximo de 10 comercios por rubro por cada zona.*/
 
 struct Comercio{
     string nombre;
@@ -12,91 +9,55 @@ struct Comercio{
     unsigned zona;
 };
 
-void Informarubros(int contador[6][4]);
-void informazonas(int contador[6][4]);
+const int MAX_POR_RUBRO = 10;
+const int CANT_ZONAS = 6;
+const int CANT_RUBROS = 4;
+
+void informar(int contador[CANT_ZONAS][CANT_RUBROS]);
 
 int main()
 {
-    unsigned i,j,k=0;
-    int contador[6][4];
-    //se podia inicializar una matriz de otra forma?
-    for(i=0;i<6;i++){
-        for(j=0;j<4;j++){
-            contador[i][j]=0;
-        }
-    }
-    Comercio comerc[240];
-    cout<<"Ingrese nombre del comercio. Ingrese un asterisco (*) para finalizar."<<endl;
-    cin>>comerc[k].nombre;
-    while(comerc[k].nombre!="*"){
+    int k = 0;
+    int contador[CANT_ZONAS][CANT_RUBROS] = {0};
+    Comercio comercios[240];
 
-        cout<<"Ingrese rubro del comercio. 1 para Pizzeria, 2 para Heladeria, 3 para Bebidas y 4 para Parrilla "<<endl;
-        cin>>comerc[k].rubro;
-        cout<<"Ingrese zona del comercio "<<endl;
-        cin>>comerc[k].zona;
-        if(contador[comerc[k].zona-1][comerc[k].rubro-1]<=9){
-            contador[comerc[k].zona-1][comerc[k].rubro-1]+=1;
+    cout << "Ingreso de datos (nombre = \"*\" para finalizar)" << endl;
+    cout << "Rubros: 1 para Pizzeria, 2 para Heladeria, 3 para Bebidas y 4 para Parrilla." << endl;
+
+    cout << "-- Nuevo Comercio --" << endl << "Ingrese el nombre: ";
+    cin >> comercios[k].nombre;
+    while (comercios[k].nombre != "*"){
+        cout << "Ingrese el rubro: ";
+        cin >> comercios[k].rubro;
+        cout << "Ingrese la zona: ";
+        cin >> comercios[k].zona;
+        if (contador[comercios[k].zona - 1][comercios[k].rubro - 1] < MAX_POR_RUBRO){
+            contador[comercios[k].zona - 1][comercios[k].rubro - 1]++;
             k++;
+        }else{
+            cout << "El ultimo comercio ingresado desbordo la cantidad permitida para su rubro. Intente de nuevo." << endl;
         }
-            else{
-                    cout<<"El ultimo negocio ingresado desbordo la cantidad permitida para su rubro. Intente de nuevo. "<<endl;
-        }
-        cout<<"Ingrese nombre del comercio. Ingrese un asterisco (*) para finalizar."<<endl;
-        cin>>comerc[k].nombre;
+        cout << "-- Nuevo Comercio --" << endl << "Ingrese el nombre: ";
+        cin >> comercios[k].nombre;
     }
-    Informarubros(contador);
-    informazonas(contador);
-    //testeo para mostrar el array contador
-    /*
-    for(i=0;i<6;i++){
-        for(j=0;j<4;j++){
-            cout<<contador[i][j]<<endl;
 
-        }
-    }*/
+    informar(contador);
+    return 0;
 }
 
-void Informarubros(int contador[6][4]){
-    int i,j,aux;
-    cout<<endl;
-    for(i=0;i<4;i++){
-        aux=0;
-        for(j=0;j<6;j++){
-            aux+=contador[j][i];
+void informar(int contador[CANT_ZONAS][CANT_RUBROS]){
+    cout << "--- Informacion sobre cada zona ---" << endl;
+    int i, j, hay_de_todos;
+    string rubros[4] = {"Pizzerias", "Heladerias", "Bebidas", "Parrillas"};
+    for (i = 0; i < CANT_ZONAS; i++){
+        cout << "- ZONA " << i+1 << " -" << endl;
+        hay_de_todos = 1; // 1 = true; 0 = false
+        for (j = 0; j < CANT_RUBROS; j++){
+            if (contador[i][j] == 0){
+                hay_de_todos = 0;
+                cout << "En la zona " << i+1 << " no se incorporaron " << rubros[j] << endl;
             }
-        switch(i){
-            case 0:
-                if (aux==0)
-                    cout<<"No se incorporaron Pizzerias"<<endl;
-                    break;
-            case 1:
-                if (aux==0)
-                    cout<<"No se incorporaron Heladerias"<<endl;
-                    break;
-            case 2:
-                if (aux==0)
-                    cout<<"No se incorporaron Bebidas"<<endl;
-                    break;
-            case 3:
-                if (aux==0)
-                    cout<<"No se incorporaron Parrillas"<<endl;
-                    break;
         }
+        cout << "En la zona " << i+1 << (hay_de_todos == 1 ? "" : " NO") << " hay comercios para todos los rubros." << endl;
     }
 }
-
-void informazonas(int contador[6][4]){
-    int i,j,k;
-    cout<<endl;
-    for(i=0;i<6;i++){
-        k=0;
-        for(j=0;j<4;j++){
-            if(contador[i][j]>0)
-                k++;
-        }
-        if(k==4)
-            cout<<"Hay comercios para todos los rubros en la zona "<<i+1<<endl;
-    }
-
-}
-
