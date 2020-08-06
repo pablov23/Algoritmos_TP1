@@ -8,197 +8,95 @@ Se admite un máximo de 10 comercios por rubro por cada zona.*/
 
 struct Comercio{
     string nombre;
-    char rubro[20];
+    int rubro;
     unsigned zona;
 };
 
-Comercio ingresoDatos();
-void ordenar(struct Comercio v[],unsigned cantidad);
-void mostrar(Comercio v[],int cantidad);
-void noIngresos(int contPizzeria,int contHeladeria,int contBebidas,int contParrilla);
-void controlZonas(Comercio v[],int cantidad);
+void Informarubros(int contador[6][4]);
+void informazonas(int contador[6][4]);
 
 int main()
 {
-    unsigned cant,i;
-    unsigned cantmax=9;
-    int contPizzeria=0,contHeladeria=0,contBebidas=0,contParrilla=0;
-     //“Heladerias.dat”, “Pizzeria.dat”, “Bebidas.dat” y “Parrilla.dat”
-    cout<<"Comercios a ingresar: ";
-    cin>>cant;
-    Comercio comerc[cant];
-    for(i=0;i<cant;i++)
-        {
-            comerc[i]=ingresoDatos();
-            if(!strcmpi(comerc[i].rubro,"Pizzeria"))
-            contPizzeria++;
-            if(!strcmpi(comerc[i].rubro,"Heladeria"))
-            contHeladeria++;
-            if(!strcmpi(comerc[i].rubro,"Bebidas"))
-            contBebidas++;
-            if(!strcmpi(comerc[i].rubro,"Parrilla"))
-            contParrilla++;
-            if(contPizzeria>cantmax||contBebidas>cantmax||contHeladeria>cantmax||contParrilla>cantmax)
-                {
-                    cout<<"El ultimo negocio ingresado desbordo la cantidad permitida para su rubro"<<endl;
-                    i--;
-                }
-
+    unsigned cant,i,j,k=0;
+    int contador[6][4];
+    //se podia inicializar una matriz de otra forma?
+    for(i=0;i<6;i++){
+        for(j=0;j<4;j++){
+            contador[i][j]=0;
         }
-
-    noIngresos(contPizzeria,contHeladeria,contBebidas,contParrilla);
-    ordenar(comerc,cant);
-    controlZonas(comerc,cant);
-    mostrar(comerc,cant);
-
-
-
-       /*
-
     }
-
-    FILE*heladerias;
-    heladerias=fopen("Heladerias.dat","wb");
-    if(heladerias==NULL)
-        cout<<"Error"<<endl;
-
-    FILE*pizzerias;
-    pizzerias=fopen("Pizzeria.dat","wb");
-    if(pizzerias==NULL)
-        cout<<"Error"<<endl;
-
-    FILE*bebidas;
-    bebidas=fopen("Bebidas.dat","wb");
-    if(bebidas==NULL)
-        cout<<"Error"<<endl;
-
-    FILE*parrilla;
-    parrilla=fopen("Parrilla.dat","wb");
-    if(parrilla==NULL)
-        cout<<"Error"<<endl;
-
-
-}
-*/
-}
-Comercio ingresoDatos()
-{
-    Comercio ingresado;
+    Comercio comerc[240];
     cout<<"Ingrese nombre comercio "<<endl;
-    cin>>ingresado.nombre;
-    cout<<"Ingrese rubro comercio "<<endl;
-    cin>>ingresado.rubro;
-    cout<<"Ingrese zona comercio "<<endl;
-    cin>>ingresado.zona;
-    return ingresado;
-}
+    cin>>comerc[k].nombre;
+    while(comerc[k].nombre!="*"){
 
-void ordenar(struct Comercio v[],unsigned cantidad)
-{
-    unsigned i=0,j;
-    Comercio aux;
-    bool cambio;
-    do
-    {
-        cambio=false;
-        for(j=0;j<cantidad-1-i;j++)
-        {
-            if(v[j].nombre>v[j+1].nombre)
-            {
-                aux=v[j];
-                v[j]=v[j+1];
-                v[j+1]=aux;
-                cambio=true;
-            }
+        cout<<"Ingrese rubro comercio. 1 para Pizzeria, 2 para Heladeria, 3 para Bebidas y 4 para Parrilla "<<endl;
+        cin>>comerc[k].rubro;
+        cout<<"Ingrese zona comercio "<<endl;
+        cin>>comerc[k].zona;
+        if(contador[comerc[k].zona-1][comerc[k].rubro-1]<=9){
+            contador[comerc[k].zona-1][comerc[k].rubro-1]+=1;
+            k++;
         }
-        i++;
-    }while(i<cantidad && cambio);
-}
-
-void mostrar(Comercio v[],int cantidad)
-{
-    for(int i=0;i<cantidad;i++)
-        cout<<v[i].nombre<<v[i].rubro<<v[i].zona<<endl;
-}
-
-void noIngresos(int contPizzeria,int contHeladeria,int contBebidas,int contParrilla)
-{
-    cout<<"Informacion general:"<<endl;
-    if(!contPizzeria)
-        cout<<"No se ingresaron pizzerías"<<endl;
-    if(!contHeladeria)
-        cout<<"No se ingresaron heladerias"<<endl;
-    if(!contBebidas)
-        cout<<"No se ingresaron locales de bebidas"<<endl;
-    if(!contParrilla)
-        cout<<"No se ingresaron parrillas"<<endl;
-
-    cout<<"\n"<<endl;
-}
-
-void controlZonas(Comercio v[],int cantidad)
-{
-    int zona[6][4]={};
-    for(int h=0;h<6;h++)
-    {
-        for(int d=0;d<4;d++)
-        {
-            cout<<zona[h][d];
+            else{
+                    cout<<"El ultimo negocio ingresado desbordo la cantidad permitida para su rubro. Intente de nuevo. "<<endl;
         }
+        cout<<"Ingrese nombre comercio "<<endl;
+        cin>>comerc[k].nombre;
     }
-    int aux;
-    for(int i=0;i<cantidad;i++)
-    {
-       if(strcmpi(v[i].rubro,"Pizzeria")==0)
-       {
-          zona[(v[i].zona)-1][0]++;
-       }
+    Informarubros(contador);
+    informazonas(contador);
+    //testeo para mostrar el array contador
+    /*
+    for(i=0;i<6;i++){
+        for(j=0;j<4;j++){
+            cout<<contador[i][j]<<endl;
 
-       if(strcmpi(v[i].rubro,"Heladeria")==0)
-       {
-          zona[(v[i].zona)-1][1]++;
-       }
+        }
+    }*/
+}
 
-       if(strcmpi(v[i].rubro,"Bebidas")==0)
-       {
-           zona[(v[i].zona)-1][2]++;
-       }
-
-       if(strcmpi(v[i].rubro,"Parrilla")==0)
-       {
-           zona[(v[i].zona)-1][3]++;
-       }
-
-    }
-
-
-    for(int i=0;i<6;i++)
-    {
-        cout<<"Comercios zona "<<i+1<<endl;
+void Informarubros(int contador[6][4]){
+    int i,j,aux;
+    cout<<endl;
+    for(i=0;i<4;i++){
         aux=0;
-        if(zona[i][0]==0)
-        {
-            cout<<"No hay Pizzerias en la zona "<<i+1<<endl;
-            aux++;
+        for(j=0;j<6;j++){
+            aux+=contador[j][i];
+            }
+        switch(i){
+            case 0:
+                if (aux==0)
+                    cout<<"No se incorporaron Pizzerias"<<endl;
+                    break;
+            case 1:
+                if (aux==0)
+                    cout<<"No se incorporaron Heladerias"<<endl;
+                    break;
+            case 2:
+                if (aux==0)
+                    cout<<"No se incorporaron Bebidas"<<endl;
+                    break;
+            case 3:
+                if (aux==0)
+                    cout<<"No se incorporaron Parrillas"<<endl;
+                    break;
         }
-        if(zona[i][1]==0)
-        {
-            cout<<"No hay Heladerias en la zona "<<i+1<<endl;
-            aux++;
-        }
-        if(zona[i][2]==0)
-        {
-            cout<<"No hay locales de bebidas en la zona "<<i+1<<endl;
-            aux++;
-        }
-        if(zona[i][3]==0)
-        {
-            cout<<"No hay Parrillas en la zona "<<i+1<<"\n"<<endl;
-            aux++;
-        }
-
-        if(!aux)
-        cout<<"Hay comercios para todos los rubros en la zona "<<i+1<<endl;
-
-        }
+    }
 }
+
+void informazonas(int contador[6][4]){
+    int i,j,k;
+    cout<<endl;
+    for(i=0;i<6;i++){
+        k=0;
+        for(j=0;j<4;j++){
+            if(contador[i][j]>0)
+                k++;
+        }
+        if(k==4)
+            cout<<"Hay comercios para todos los rubros en la zona "<<i+1<<endl;
+    }
+
+}
+
