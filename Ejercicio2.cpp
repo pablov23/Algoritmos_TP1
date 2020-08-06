@@ -1,5 +1,5 @@
 #include <iostream>
-#include<string.h>
+#include <string.h>
 
 using namespace std;
 
@@ -17,7 +17,7 @@ void informazonas(int contador[6][4]);
 
 int main()
 {
-    unsigned cant,i,j,k=0;
+    unsigned i,j,k=0;
     int contador[6][4];
     //se podia inicializar una matriz de otra forma?
     for(i=0;i<6;i++){
@@ -26,13 +26,13 @@ int main()
         }
     }
     Comercio comerc[240];
-    cout<<"Ingrese nombre comercio "<<endl;
+    cout<<"Ingrese nombre del comercio. Ingrese un asterisco (*) para finalizar."<<endl;
     cin>>comerc[k].nombre;
     while(comerc[k].nombre!="*"){
 
-        cout<<"Ingrese rubro comercio. 1 para Pizzeria, 2 para Heladeria, 3 para Bebidas y 4 para Parrilla "<<endl;
+        cout<<"Ingrese rubro del comercio. 1 para Pizzeria, 2 para Heladeria, 3 para Bebidas y 4 para Parrilla "<<endl;
         cin>>comerc[k].rubro;
-        cout<<"Ingrese zona comercio "<<endl;
+        cout<<"Ingrese zona del comercio "<<endl;
         cin>>comerc[k].zona;
         if(contador[comerc[k].zona-1][comerc[k].rubro-1]<=9){
             contador[comerc[k].zona-1][comerc[k].rubro-1]+=1;
@@ -41,7 +41,7 @@ int main()
             else{
                     cout<<"El ultimo negocio ingresado desbordo la cantidad permitida para su rubro. Intente de nuevo. "<<endl;
         }
-        cout<<"Ingrese nombre comercio "<<endl;
+        cout<<"Ingrese nombre del comercio. Ingrese un asterisco (*) para finalizar."<<endl;
         cin>>comerc[k].nombre;
     }
     Informarubros(contador);
