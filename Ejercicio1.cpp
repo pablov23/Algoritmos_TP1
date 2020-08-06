@@ -1,10 +1,7 @@
 #include <iostream>
-
+#include <stdio.h>
 
 using namespace std;
-
-void mostrarDatos(struct Repartidor repart[],int cantidad);
-Repartidor ingresoDatos();
 
 struct Repartidor
 {
@@ -12,87 +9,65 @@ struct Repartidor
     char nombre[20];
     char apellido[20];
     unsigned zona;
-
 };
-int main()
-{
-    int cant,i;
-    FILE*repartidores;
-    repartidores=fopen("Repartidores.dat","wb");
-    if(repartidores==NULL)
-        cout<<"Error"<<endl;
-    else
-    {
-        cout<<"Repartidores a ingresar: ";
-        cin>>cant;
-        Repartidor repart[cant];
-        for(i=0;i<cant;i++)
-        {
-            cout<<"Repartidor N "<<i+1<<endl;
-            repart[i]=ingresoDatos();
-            fwrite(&repart[i],sizeof(Repartidor),1,repartidores);
-        }
-        fclose(repartidores);
-        mostrarDatos(&repart[0],cant);
+
+void mostrarDatos(int v[], int ce);
+void ingresoDatos(int v[], int ce, FILE* arch);
+
+const int CANT_ZONAS = 6;
+
+int main() {
+    int zonas[CANT_ZONAS] = {0};
+    FILE* archivo = fopen("Repartidores.dat", "w");
+    if (archivo == NULL){
+        cout << "Error" << endl;
+        return 0;
     }
+    ingresoDatos(zonas, CANT_ZONAS, archivo);
+    fclose(archivo);
+    mostrarDatos(zonas, CANT_ZONAS);
     return 0;
 }
 
-Repartidor ingresoDatos()
+void ingresoDatos(int zonas[], int cant_zonas, FILE* arch)
 {
-    Repartidor auxiliar;
-    cout<<"Ingrese DNI repartidor "<<endl;
-    cin>>auxiliar.dni;
-    cout<<"Ingrese nombre repartidor "<<endl;
-    cin>>auxiliar.nombre;
-    cout<<"Ingrese apellido repartidor "<<endl;
-    cin>>auxiliar.apellido;
-    cout<<"Ingrese zona repartidor "<<endl;
-    cin>>auxiliar.zona;
-    return auxiliar;
+    Repartidor aux;
+    cout << "Ingreso de repartidores (DNI = 0 para finalizar)" << endl;
+    cout << "--- Nuevo Repartidor ---" << endl << "Ingrese el DNI: ";
+    cin >> aux.dni;
+
+    while (aux.dni != 0) {
+
+        // Ingreso de datos
+        cout << "Ingrese el nombre: ";
+        cin >> aux.nombre;
+        cout << "Ingrese el apellido: ";
+        cin >> aux.apellido;
+        cout << "Ingrese la zona (del 1 al " << cant_zonas << "): ";
+        cin >> aux.zona;
+
+        // Verificar la zona (si es valida, agregarlo al archivo)
+        if (aux.zona < 1 || aux.zona > cant_zonas){
+            cout << "Error: zona invalida" << endl;
+        } else {
+            zonas[aux.zona - 1]++;
+            fwrite(&aux, sizeof(Repartidor), 1, arch);
+        }
+
+        // Ingreso del DNI
+        cout << "--- Nuevo Repartidor ---" << endl << "Ingrese el DNI: ";
+        cin >> aux.dni;
+
+    }
 }
 
-void mostrarDatos(struct Repartidor repart[],int cantidad)
+void mostrarDatos(int zonas[], int cant_zonas)
 {
-    int j;
-    int zona[]={0,0,0,0,0,0};
-            for(j=0;j<cantidad;j++){
-
-
-                switch(repart[j].zona)
-                {
-                case 1:
-                    zona[0]++;
-                    break;
-                case 2:
-                    zona[1]++;
-                    break;
-                case 3:
-                    zona[2]++;
-                    break;
-                case 4:
-                    zona[3]++;
-                    break;
-                case 5:
-                    zona[4]++;
-                    break;
-                case 6:
-                    zona[5]++;
-                    break;
-                default:
-                    cout<<"Error";
-
-         }
-
+    cout << "-- Cantidad de repartidores por zona: --" << endl;
+    for(int i = 0; i < cant_zonas; i++){
+        if(zonas[i] == 0)
+            cout << "No hay repartidores en la zona " << i+1 << endl;
+        else
+            cout << "En la zona "<< i+1 << " hay " << zonas[i] << " repartidores." << endl;
+    }
 }
-    cout<<"Cantidad de repartidores por zona:"<<endl;
-     for(j=0;j<6;j++){
-            cout<<"Zona: "<<j+1<<endl;
-            if(zona[j]==0)
-                cout<<" No hay repartidores en la zona "<<endl;
-            else
-                cout<<" Cantidad de repartidores: "<<zona[j]<<endl;
-
-     }
-}
-
