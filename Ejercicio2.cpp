@@ -69,7 +69,7 @@ void generar_archivos(Comercio c[MAX_COMERCIOS]){
 void escribir_archivo(string nombre, Comercio comercios[], int length){
     char char_array[nombre.length() + 1];
     strcpy(char_array, nombre.c_str());
-    FILE* archivo = fopen(char_array, "w");
+    FILE* archivo = fopen(char_array, "ab");
     for (int i = 0; i < length; i++)
         fwrite(&comercios[i], sizeof(Comercio), 1, archivo);
     fclose(archivo);
