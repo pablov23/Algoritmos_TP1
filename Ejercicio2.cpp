@@ -105,18 +105,22 @@ void ordenar(Comercio comercios[], int length){
 
 // Provee al usuario informacion sobre cada zona
 void informar(int contador[CANT_ZONAS][CANT_RUBROS]){
-    cout << "--- Informacion sobre cada zona ---" << endl;
-    int i, j, hay_de_todos;
+    cout << "--- Informacion sobre los comercios ingresados ---" << endl;
+    int i, j;
+    bool todos;
+    // Informacion sobre cada rubro
+    for (i = 0; i < CANT_RUBROS; i++) {
+        todos = true;
+        for (j = 0; j < CANT_ZONAS; j++)
+            if (contador[j][i] != 0) todos = false;
+        if (todos) cout << "No se incorporaron " << nombre_rubros[i] << "." << endl;
+    }
+    // Informacion sobre cada zona
     for (i = 0; i < CANT_ZONAS; i++){
-        cout << "- ZONA " << i+1 << " -" << endl;
-        hay_de_todos = 1; // 1 = true; 0 = false
-        for (j = 0; j < CANT_RUBROS; j++){
-            if (contador[i][j] == 0){
-                hay_de_todos = 0;
-                cout << "En la zona " << i+1 << " no se incorporaron " << nombre_rubros[j] << endl;
-            }
-        }
-        cout << "En la zona " << i+1 << (hay_de_todos == 1 ? "" : " NO") << " hay comercios para todos los rubros." << endl;
+        todos = true;
+        for (j = 0; j < CANT_RUBROS; j++)
+            if (contador[i][j] == 0) todos = false;
+        cout << "En la zona " << i+1 << (todos ? "" : " NO") << " hay comercios para todos los rubros." << endl;
     }
 }
 
