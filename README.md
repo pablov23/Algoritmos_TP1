@@ -41,3 +41,36 @@ alfabéticamente por nombre del comercio.
 3) Informar, si hubo, rubros en los que no se hayan incorporado comercios.
 Para realizar los puntos 2 y 3 utilizar estructuras de datos en memoria (arrays), no hacerlo con los archivos
 generados.
+
+
+
+
+# Parte 2:
+
+El objetivo de esta segunda parte es poner en práctica el concepto de Estructuras dinámicas y la combinación de éstas con otras estructuras vistas en la primera parte.
+
+
+# Ejercicio 1: Recepción de pedidos
+
+Hacer un programa que presente al usuario un menú de opciones para:
+
+1- Recibir un pedido
+Se ingresan por teclado los datos de un pedido:
+    -domicilio para hacer la entrega
+    -zona de la entrega (1 a 6)
+    -comercio en el que se hizo el pedido rubro del comercio
+    -rubro del comercio
+    -importe del pedido
+Sólo se acepta el pedido si corresponde a un comercio de los inscriptos previamente y que zona de la entrega.
+corresponda a la zona de entrega.
+El pedido debe almacenarse en una estructura de datos donde se acceda a los mismos según el orden de llegada a la estructura. Es conveniente tener una estructura para cada una de las zonas.
+
+2- Asignar pedidos a un repartidor
+Dado el nombre de un repartidor y una cantidad de pedidos que entregará, eliminar esa cantidad de pedidos de la estructura donde estaban almacenados los pedidos en espera de esa zona y asignárselos al repartidor como pedidos entregados en una estructura de datos dinámica adecuada. El repartidor tiene que estar entre los inscriptos.
+
+3- Mostrar
+Mostrar todos los repartidores que hicieron entregas, ordenados por nombre, y por cada uno de ellos las entregas realizadas ordenadas de mayor a menor por importe.
+
+4- Salir
+Al finalizar el programa emitir el listado de comercios a los que se les ha realizado entregas, indicando el nombre del comercio y la cantidad entregas realizadas al mismo, ordenado alfabéticamente por nombre del comercio, utilizando un árbol binario de búsqueda. Se deberán cargar los datos en el mismo y recorrerlo INORDER para emitir el listado. 
+El árbol binario se puede generar al finalizar el programa o ir almacenando los datos durante el proceso. La emisión del listado debe ser al finalizar el programa.
