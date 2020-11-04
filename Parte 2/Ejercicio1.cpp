@@ -22,7 +22,7 @@ struct NodoPedido{
 };
 
 const unsigned CANT_ZONAS = 6;
-const string nombre_rubros[4] = {"Pizzerias.dat", "Heladerias.dat", "Bebidas.dat", "Parrillas.dat"};
+const string nombre_archivos[4] = {"Pizzerias.dat", "Heladerias.dat", "Bebidas.dat", "Parrillas.dat"};
 
 void recibirPedido(NodoPedido* pilas[CANT_ZONAS]);
 int getZona(string nombre, unsigned rubro);
@@ -34,7 +34,7 @@ void salir();
 
 int main(){
     NodoPedido* pilas[CANT_ZONAS]; // Pilas de pedidos (una por cada zona)
-    int numero = 1; // Opcion del menu
+    unsigned numero = 1; // Opcion del menu
     while (numero >= 1 && numero <=3)
     {
         cout<<"- Menu ----------------------------------------------------------"<<endl;
@@ -55,12 +55,12 @@ int main(){
 void recibirPedido(NodoPedido* pilas[CANT_ZONAS]){
     Pedido p = ingresarDatosPedido();
     int zona = getZona(p.comercio, p.rubro);
-    if (zona != p.zona) {
+    if (zona == p.zona) {
+        apilarPedido(pilas[zona-1], p);
+        cout<<"Pedido recibido!"<<endl;
+    } else {
         cout<<"Error: el comercio no esta inscripto. Ingrese nuevamente los datos."<<endl;
-        return;
     }
-    apilarPedido(pilas[zona-1], p);
-    cout<<"Pedido recibido!"<<endl;
 }
 
 // Ingreso de datos para un nuevo pedido
@@ -79,7 +79,7 @@ Pedido ingresarDatosPedido(){
     return p;
 }
 
-// Inserta un comercio en una pila
+// Inserta un pedido en una pila
 void apilarPedido(NodoPedido *&pila, Pedido pedido){
     NodoPedido *p;
     p = new NodoPedido;
@@ -90,7 +90,7 @@ void apilarPedido(NodoPedido *&pila, Pedido pedido){
 
 // Busca un comercio en los archivos y devuelve su zona
 int getZona(string nombre, unsigned rubro){
-    string nombreArchivo = nombre_rubros[rubro-1];
+    string nombreArchivo = nombre_archivos[rubro-1];
     char char_array[nombreArchivo.length() + 1];
     strcpy(char_array, nombreArchivo.c_str());
     FILE* archivo = fopen(char_array, "rb");
@@ -98,7 +98,10 @@ int getZona(string nombre, unsigned rubro){
     Comercio c;
     fread(&c, sizeof(Comercio), 1, archivo);
     while (!feof(archivo)) {
-        if (c.nombre == nombre) return c.zona;
+        if (c.nombre == nombre) {
+            fclose(archivo);
+            return c.zona;
+        }
         fread(&c, sizeof(Comercio), 1, archivo);
     }
     fclose(archivo);
