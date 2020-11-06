@@ -3,6 +3,19 @@
 
 using namespace std;
 
+struct Repartidor
+{
+    int dni;
+    char nombre[20];
+    char apellido[20];
+    unsigned zona;
+};
+
+struct NodoRepartidor
+{
+    Repartidor dato;
+    Pedido* sig;
+};
 struct Pedido {
     string domicilio;
     unsigned zona;
@@ -75,7 +88,7 @@ Pedido ingresarDatosPedido(){
     cout<<"Rubro (1=Pizzeria 2=Heladeria 3=Bebidas 4=Parrilla): ";
     cin>>p.rubro;
     cout<<"Importe: ";
-    cin>>p.importe; 
+    cin>>p.importe;
     return p;
 }
 
@@ -108,7 +121,29 @@ int getZona(string nombre, unsigned rubro){
     return -1;
 }
 
-void asignarPedidos(){
+void asignarPedidos(string nombreRep, unsigned cantPedidos){
+    int zona = getZonaRepartidor(nombreRep);
+    cout>>zona;
+
+
+
+
+}
+
+int getZonaRepartidor(string nombreRep){
+    FILE* archivoRep = fopen(Repartidores.dat,"rb");
+    if (archivo == NULL) return -1;
+    Repartidor r;
+    fread(&r, sizeof(Repartidor),1,archivoRep);
+    while (!feof(archivoRep)) {
+        if (r.nombre == nombreRep) {
+            fclose(archivoRep);
+            return r.zona;
+        }
+        fread(&r, sizeof(Repartidor),1,archivoRep);
+    }
+    fclose(archivoRep);
+    return -1;
 
 }
 
@@ -117,5 +152,5 @@ void mostrar(){
 }
 
 void salir(){
-    
+
 }
