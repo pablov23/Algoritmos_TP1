@@ -123,7 +123,6 @@ int getZona(string nombre, unsigned rubro){
 
 void asignarPedidos(string nombreRep, unsigned cantPedidos){
     int zona = getZonaRepartidor(nombreRep);
-    cout>>zona;
 
 
 
