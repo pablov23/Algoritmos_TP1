@@ -122,7 +122,13 @@ int getZona(string nombre, unsigned rubro){
     return -1;
 }
 
-void asignarPedidos(string nombreRep, unsigned cantPedidos){
+void asignarPedidos(){
+    string nombreRep;
+    int cantPedidos;
+    cout<<"Ingrese nombre del repartidor"<<endl;
+    cin>> nombreRep;
+    cout<<"Ingrese cantidad de Pedidos"<<endl;
+    cin>> cantPedidos;
     int zona = getZonaRepartidor(nombreRep);
     cout<<zona;
 
