@@ -11,11 +11,6 @@ struct Repartidor
     unsigned zona;
 };
 
-struct NodoRepartidor
-{
-    Repartidor dato;
-    Pedido* sig;
-};
 struct Pedido {
     string domicilio;
     unsigned zona;
@@ -33,6 +28,11 @@ struct NodoPedido{
     Pedido dato;
     NodoPedido *sig;
 };
+struct NodoRepartidor
+{
+    Repartidor dato;
+    Pedido *sig;
+};
 
 const unsigned CANT_ZONAS = 6;
 const string nombre_archivos[4] = {"Pizzerias.dat", "Heladerias.dat", "Bebidas.dat", "Parrillas.dat"};
@@ -40,6 +40,7 @@ const string nombre_archivos[4] = {"Pizzerias.dat", "Heladerias.dat", "Bebidas.d
 void recibirPedido(NodoPedido* pilas[CANT_ZONAS]);
 int getZona(string nombre, unsigned rubro);
 void apilarPedido(NodoPedido *&pila, Pedido pedido);
+int getZonaRepartidor(string nombreRep);
 Pedido ingresarDatosPedido();
 void asignarPedidos();
 void mostrar();
@@ -123,15 +124,13 @@ int getZona(string nombre, unsigned rubro){
 
 void asignarPedidos(string nombreRep, unsigned cantPedidos){
     int zona = getZonaRepartidor(nombreRep);
-
-
-
+    cout<<zona;
 
 }
 
 int getZonaRepartidor(string nombreRep){
-    FILE* archivoRep = fopen(Repartidores.dat,"rb");
-    if (archivo == NULL) return -1;
+    FILE* archivoRep = fopen("Repartidores.dat","rb");
+    if (archivoRep == NULL) return -1;
     Repartidor r;
     fread(&r, sizeof(Repartidor),1,archivoRep);
     while (!feof(archivoRep)) {
