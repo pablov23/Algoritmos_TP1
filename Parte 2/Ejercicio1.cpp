@@ -88,11 +88,11 @@ void recibirPedido(FILE* archivos[4], ColaPedidos* colas[CANT_ZONAS]){
     Pedido p = ingresarDatosPedido();
     int zona = getZonaComercio(archivos[p.rubro-1], p.comercio);
     cout<<"-----------------------------------------------------------------"<<endl;
-    if (zona == p.zona) {
+    if (zona == -1) {
+        cout<<"Error: el comercio no esta inscripto. Ingrese nuevamente los datos."<<endl;
+    } else {
         encolarPedido(colas[zona-1], p);
         cout<<"Pedido recibido!"<<endl;
-    } else {
-        cout<<"Error: el comercio no esta inscripto. Ingrese nuevamente los datos."<<endl;
     }
 }
 
