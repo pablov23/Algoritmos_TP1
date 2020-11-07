@@ -152,12 +152,12 @@ void asignarPedidos(NodoRepartidor* &lista){
 
 NodoRepartidor* buscarInsertarRepartidor(NodoRepartidor* &lista, Repartidor rep){
     NodoRepartidor*ant, *repLista=lista;
-    while(repLista!=NULL && repLista->dato.nombre>rep.nombre)
+    while(repLista!=NULL && strcmp(repLista->dato.nombre,rep.nombre)<0)
     {
         ant=repLista;
         repLista=repLista->sigRep;
     }
-    if(repLista==NULL)
+    if(repLista==NULL || strcmp(repLista->dato.nombre,rep.nombre)>0)
     {
         NodoRepartidor* n = new NodoRepartidor;
         n->dato=rep;
@@ -198,7 +198,7 @@ void mostrar(NodoRepartidor* listaRep){
     nr = listaRep;
     while(nr!=NULL)
     {
-        cout<<nr->dato.nombre<<" "<<nr->dato.apellido<<" "<<nr->dato.zona<<endl;
+        cout<<nr->dato.nombre<<" "<<nr->dato.apellido<<" "<<nr->dato.zona<<" "<<nr->dato.dni<<endl;
         nr=nr->sigRep;
     }
 }
