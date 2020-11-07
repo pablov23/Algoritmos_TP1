@@ -234,17 +234,25 @@ void transferirPedidos(NodoPedido*&listaPedido, ColaPedidos*&pedidos, int cantPe
     while (pedidos->pri != NULL && contador <= cantPedidos){
         desencolarPedido(pedidos, p);
         insertarPedidoPorImporte(listaPedido, p);
-        cout<<"asigno pedido de importe: "<<p.importe<<endl;
         contador++;
     }
 }
 
+// Muestra todos los repartidores y sus pedidos
 void mostrar(NodoRepartidor* listaRep){
+    cout<<"- Repartidores: -------------------------------------------------"<<endl;
     NodoRepartidor* nr;
     nr = listaRep;
-    while(nr != NULL)
-    {
-        cout<<nr->dato.nombre<<" "<<nr->dato.apellido<<" "<<nr->dato.zona<<" "<<nr->dato.dni<<endl;
+    while(nr != NULL){
+        cout<<"Repartidor: "<<nr->dato.nombre<<" "<<nr->dato.apellido<<" (DNI: "<<nr->dato.dni<<", Zona: "<<nr->dato.zona<<")"<<endl;
+        cout<<"Pedidos:"<<endl;
+        NodoPedido* l = nr->listaPedido;
+        while (l != NULL){
+            cout<<"- Importe: "<<l->dato.importe<<", Comercio: "<<l->dato.comercio<<", Domicilio: "<<l->dato.domicilio;
+            cout<<", Rubro: "<<l->dato.rubro<<", Zona: "<<l->dato.zona<<endl;
+            l = l->sig;
+        }
+        if (nr->sigRep != NULL) cout<<"-----------------------------------------------------------------"<<endl;
         nr = nr->sigRep;
     }
 }
