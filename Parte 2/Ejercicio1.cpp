@@ -163,9 +163,22 @@ int getZonaRepartidor(string nombreRep){
     return -1;
 }
 
+/*
 void mostrar(){
-
+    NodoRepartidor* nr;
+    nr = listaRepartidores;
+    NodoPedido* p;
+    while(nr!=NULL)
+    {   
+        cout<<nr->dato.nombre<<nr->dato.apellido<<nr->dato.zona<<endl;
+        while(p!=NULL){
+                cout<<p->dato.importe<<p->dato.comercio<<p->dato.rubro<<endl;
+                p=nr->sig;
+        }
+    }
 }
+
+*/
 
 void salir(){
     
