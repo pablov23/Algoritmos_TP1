@@ -44,6 +44,7 @@ int getZonaComercio(FILE* archivo, string nombre);
 Pedido ingresarDatosPedido();
 void asignarPedidos(NodoRepartidor*&lista);
 int getZonaRepartidor(string nombreRep,NodoRepartidor*&lista);
+NodoRepartidor* buscarInsertarRepartidor(NodoRepartidor* &lista, Repartidor rep);
 void mostrar(NodoRepartidor* listaRep);
 void salir();
 
@@ -138,7 +139,6 @@ int getZonaComercio(FILE* archivo, string nombre){
 
 // Asigna pedidos a un repartidor
 void asignarPedidos(NodoRepartidor* &lista){
-    NodoPedido* auxiliar;
     string nombreRep;
     char n[20] = "Fausto";
     int cantPedidos;
@@ -147,14 +147,12 @@ void asignarPedidos(NodoRepartidor* &lista){
     cout<<"Ingrese cantidad de Pedidos: ";
     cin>> cantPedidos;
     int zona = getZonaRepartidor(nombreRep, lista);
-    //auxiliar= colas[auxZona-1]->pri;
-    //lista[auxZona]=auxiliar;
 
 }
 
 NodoRepartidor* buscarInsertarRepartidor(NodoRepartidor* &lista, Repartidor rep){
     NodoRepartidor*ant, *repLista=lista;
-    while(repLista!=NULL && repLista->dato.nombre<rep.nombre)
+    while(repLista!=NULL && repLista->dato.nombre>rep.nombre)
     {
         ant=repLista;
         repLista=repLista->sigRep;
@@ -183,13 +181,14 @@ int getZonaRepartidor(string nombreRep,NodoRepartidor * &lista){
     fread(&r, sizeof(Repartidor), 1, archivo);
     while (!feof(archivo)) {
         if (r.nombre == nombreRep) {
-            buscarInsertarRepartidor(lista,r);
-            return r.zona;
+            lista = buscarInsertarRepartidor(lista,r);
             fclose(archivo);
+            return r.zona;
         }
         fread(&r, sizeof(Repartidor), 1, archivo);
     }
     fclose(archivo);
+    cout<<"No existe repartidor con ese nombre"<<endl;
     return -1;
 }
 
@@ -199,7 +198,7 @@ void mostrar(NodoRepartidor* listaRep){
     nr = listaRep;
     while(nr!=NULL)
     {
-        cout<<nr->dato.nombre<<nr->dato.apellido<<nr->dato.zona<<endl;
+        cout<<nr->dato.nombre<<" "<<nr->dato.apellido<<" "<<nr->dato.zona<<endl;
         nr=nr->sigRep;
     }
 }
