@@ -45,7 +45,7 @@ int getZonaComercio(FILE* archivo, string nombre);
 Pedido ingresarDatosPedido();
 // Parte 2
 void asignarPedidos(NodoRepartidor*&lista, ColaPedidos* colas[CANT_ZONAS]);
-Repartidor getRepartidor(string nombreRep);
+int getRepartidor(string nombreRep, Repartidor &repartidor);
 NodoRepartidor* buscarInsertarRepartidor(NodoRepartidor* &lista, Repartidor rep);
 void insertarPedidoPorImporte(NodoPedido*&lista, Pedido pedido);
 void desencolarPedido(ColaPedidos*&cola, Pedido &pedido);
@@ -65,8 +65,7 @@ int main(){
     NodoRepartidor* listaRep = NULL;
     // Le muestro un menu de opciones al usuario
     unsigned opcion = 1;
-    while (opcion >= 1 && opcion <=3)
-    {
+    while (opcion >= 1 && opcion <=3){
         cout<<"- Menu ----------------------------------------------------------"<<endl;
         cout<<"1: Recibir un pedido / 2: Asignar pedidos / 3: Mostrar / 4: Salir"<<endl;
         cout<<"Ingrese un numero del 1 al 4: ";
@@ -111,7 +110,7 @@ void encolarPedido(ColaPedidos*&cola, Pedido pedido){
 // Ingreso de datos para un nuevo pedido
 Pedido ingresarDatosPedido(){
     Pedido p;
-    cout<<"Ingrese los siguientes datos:"<<endl<<"Domicilio: ";
+    cout<<"Domicilio: ";
     cin>>p.domicilio;
     cout<<"Zona: ";
     cin>>p.zona;
@@ -130,8 +129,7 @@ int getZonaComercio(FILE* archivo, string nombre){
     unsigned desde = 0, hasta, medio;
     fseek(archivo,0,SEEK_END);
     hasta = ftell(archivo)/sizeof(Comercio);
-    while(desde <= hasta)
-    {
+    while(desde <= hasta){
         medio = (desde + hasta) / 2;
         fseek(archivo, medio*sizeof(Comercio), SEEK_SET);
         fread(&c, sizeof(Comercio), 1, archivo);
@@ -152,8 +150,9 @@ void asignarPedidos(NodoRepartidor* &lista, ColaPedidos* colas[CANT_ZONAS]){
     cout<<"Ingrese cantidad de Pedidos: ";
     cin>> cantPedidos;
     cout<<"-----------------------------------------------------------------"<<endl;
-    Repartidor r = getRepartidor(nombreRep);
-    if (r.zona == -1) {
+    Repartidor r;
+    int existe = getRepartidor(nombreRep, r);
+    if (existe == -1) {
         cout<<"Error: el repartidor no esta inscripto."<<endl;
         return;
     }
@@ -162,34 +161,32 @@ void asignarPedidos(NodoRepartidor* &lista, ColaPedidos* colas[CANT_ZONAS]){
     cout<<"Pedidos asignados correctamente."<<endl;
 }
 
-// Busca un repartidor en el archivo y lo devuelve (si no lo encuentra devuelve uno vacio con zona = -1)
-Repartidor getRepartidor(string nombreRep){
-    Repartidor r, vacio;
-    vacio.zona = -1;
+// Busca un repartidor en el archivo (si no lo encuentra devuelve -1)
+int getRepartidor(string nombreRep, Repartidor &repartidor){
+    Repartidor r;
     FILE* archivo = fopen("Repartidores.dat", "rb");
-    if (archivo == NULL) return vacio;
+    if (archivo == NULL) return -1;
     fread(&r, sizeof(Repartidor), 1, archivo);
     while (!feof(archivo)) {
         if (r.nombre == nombreRep) {
+            repartidor = r;
             fclose(archivo);
-            return r;
+            return 1;
         }
         fread(&r, sizeof(Repartidor), 1, archivo);
     }
     fclose(archivo);
-    return vacio;
+    return -1;
 }
 
 // Busca un repartidor en la lista, y si no esta lo agrega en orden alfabetico
 NodoRepartidor* buscarInsertarRepartidor(NodoRepartidor* &lista, Repartidor rep){
     NodoRepartidor *ant, *repLista = lista;
-    while(repLista != NULL && strcmp(repLista->dato.nombre, rep.nombre) < 0)
-    {
+    while(repLista != NULL && strcmp(repLista->dato.nombre, rep.nombre) < 0){
         ant = repLista;
         repLista = repLista->sigRep;
     }
-    if(repLista == NULL || strcmp(repLista->dato.nombre, rep.nombre) > 0)
-    {
+    if(repLista == NULL || strcmp(repLista->dato.nombre, rep.nombre) > 0){
         NodoRepartidor* n = new NodoRepartidor;
         n->dato = rep;
         n->sigRep = repLista;
