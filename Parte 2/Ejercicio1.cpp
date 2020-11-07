@@ -32,7 +32,8 @@ struct Repartidor
 struct NodoRepartidor
 {
     Repartidor dato;
-    Pedido *sig;
+    NodoRepartidor *sigRep;
+    Pedido *listaPedido;
 };
 
 const unsigned CANT_ZONAS = 6;
@@ -41,9 +42,9 @@ void recibirPedido(FILE* archivos[4], ColaPedidos* colas[CANT_ZONAS]);
 void encolarPedido(ColaPedidos* cola, Pedido pedido);
 int getZonaComercio(FILE* archivo, string nombre);
 Pedido ingresarDatosPedido();
-void asignarPedidos();
-int getZonaRepartidor(string nombreRep);
-void mostrar();
+void asignarPedidos(NodoRepartidor*&lista);
+int getZonaRepartidor(string nombreRep,NodoRepartidor*&lista);
+void mostrar(NodoRepartidor* listaRep);
 void salir();
 
 int main(){
@@ -52,6 +53,8 @@ int main(){
     if (archivos[0]==NULL || archivos[1]==NULL || archivos[2]==NULL || archivos[3]==NULL) return 1;
     // Creo un vector con colas (uno para cada zona), y lo inicializo
     ColaPedidos* colas[CANT_ZONAS];
+    NodoRepartidor* listaRep;
+    listaRep=NULL;
     for (unsigned i = 0; i<CANT_ZONAS; i++) colas[i] = new ColaPedidos;
     // Le muestro un menu de opciones al usuario
     unsigned opcion = 1;
@@ -63,8 +66,8 @@ int main(){
         cin>>opcion;
         switch (opcion){
             case 1: recibirPedido(archivos, colas); break;
-            case 2: asignarPedidos(); break;
-            case 3: mostrar(); break;
+            case 2: asignarPedidos(listaRep); break;
+            case 3: mostrar(listaRep); break;
             case 4: salir(); break;
             default: break;
         }
@@ -110,7 +113,7 @@ Pedido ingresarDatosPedido(){
     cout<<"Rubro (1=Pizzeria 2=Heladeria 3=Bebidas 4=Parrilla): ";
     cin>>p.rubro;
     cout<<"Importe: ";
-    cin>>p.importe; 
+    cin>>p.importe;
     return p;
 }
 
@@ -134,7 +137,8 @@ int getZonaComercio(FILE* archivo, string nombre){
 }
 
 // Asigna pedidos a un repartidor
-void asignarPedidos(){
+void asignarPedidos(NodoRepartidor* &lista){
+    NodoPedido* auxiliar;
     string nombreRep;
     char n[20] = "Fausto";
     int cantPedidos;
@@ -142,18 +146,44 @@ void asignarPedidos(){
     cin>> nombreRep;
     cout<<"Ingrese cantidad de Pedidos: ";
     cin>> cantPedidos;
-    int zona = getZonaRepartidor(nombreRep);
-    cout<<zona<<endl;
+    int zona = getZonaRepartidor(nombreRep, lista);
+    //auxiliar= colas[auxZona-1]->pri;
+    //lista[auxZona]=auxiliar;
+
 }
 
+NodoRepartidor* buscarInsertarRepartidor(NodoRepartidor* &lista, Repartidor rep){
+    NodoRepartidor*ant, *repLista=lista;
+    while(repLista!=NULL && repLista->dato.nombre<rep.nombre)
+    {
+        ant=repLista;
+        repLista=repLista->sigRep;
+    }
+    if(repLista==NULL)
+    {
+        NodoRepartidor* n = new NodoRepartidor;
+        n->dato=rep;
+        n->sigRep=repLista;
+        if(repLista!=lista)
+            ant->sigRep=n;
+        else
+            lista =n;
+        return n;
+    }
+    else
+        return repLista;
+}
+
+//void buscarInsertarPedido(){}
 // Devuelve la zona de un repartidor, fijandose en el archivo
-int getZonaRepartidor(string nombreRep){
+int getZonaRepartidor(string nombreRep,NodoRepartidor * &lista){
     FILE* archivo = fopen("Repartidores.dat", "rb");
     if (archivo == NULL) return -1;
     Repartidor r;
     fread(&r, sizeof(Repartidor), 1, archivo);
     while (!feof(archivo)) {
         if (r.nombre == nombreRep) {
+            buscarInsertarRepartidor(lista,r);
             return r.zona;
             fclose(archivo);
         }
@@ -163,23 +193,18 @@ int getZonaRepartidor(string nombreRep){
     return -1;
 }
 
-/*
-void mostrar(){
+
+void mostrar(NodoRepartidor* listaRep){
     NodoRepartidor* nr;
-    nr = listaRepartidores;
-    NodoPedido* p;
+    nr = listaRep;
     while(nr!=NULL)
-    {   
+    {
         cout<<nr->dato.nombre<<nr->dato.apellido<<nr->dato.zona<<endl;
-        while(p!=NULL){
-                cout<<p->dato.importe<<p->dato.comercio<<p->dato.rubro<<endl;
-                p=nr->sig;
-        }
+        nr=nr->sigRep;
     }
 }
 
-*/
 
 void salir(){
-    
+
 }
