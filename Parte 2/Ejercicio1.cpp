@@ -181,7 +181,7 @@ int getZonaRepartidor(string nombreRep,NodoRepartidor * &lista){
     fread(&r, sizeof(Repartidor), 1, archivo);
     while (!feof(archivo)) {
         if (r.nombre == nombreRep) {
-            lista = buscarInsertarRepartidor(lista,r);
+            buscarInsertarRepartidor(lista,r);
             fclose(archivo);
             return r.zona;
         }
