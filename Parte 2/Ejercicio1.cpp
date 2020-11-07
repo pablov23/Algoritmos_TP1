@@ -33,20 +33,23 @@ struct NodoRepartidor
 {
     Repartidor dato;
     NodoRepartidor *sigRep;
-    Pedido *listaPedido;
+    NodoPedido *listaPedido;
 };
 
 const unsigned CANT_ZONAS = 6;
 
 // Parte 1
 void recibirPedido(FILE* archivos[4], ColaPedidos* colas[CANT_ZONAS]);
-void encolarPedido(ColaPedidos* cola, Pedido pedido);
+void encolarPedido(ColaPedidos*&cola, Pedido pedido);
 int getZonaComercio(FILE* archivo, string nombre);
 Pedido ingresarDatosPedido();
 // Parte 2
 void asignarPedidos(NodoRepartidor*&lista, ColaPedidos* colas[CANT_ZONAS]);
 Repartidor getRepartidor(string nombreRep);
 NodoRepartidor* buscarInsertarRepartidor(NodoRepartidor* &lista, Repartidor rep);
+void insertarPedidoPorImporte(NodoPedido*&lista, Pedido pedido);
+void desencolarPedido(ColaPedidos*&cola, Pedido &pedido);
+void transferirPedidos(NodoPedido*&listaPedido, ColaPedidos*&pedidos, int cantPedidos);
 // Partes 3 y 4
 void mostrar(NodoRepartidor* listaRep);
 void salir();
@@ -95,7 +98,7 @@ void recibirPedido(FILE* archivos[4], ColaPedidos* colas[CANT_ZONAS]){
 }
 
 // Inserta un pedido en una cola
-void encolarPedido(ColaPedidos* cola, Pedido pedido){
+void encolarPedido(ColaPedidos*&cola, Pedido pedido){
     NodoPedido* p;
     p = new NodoPedido;
     p->dato = pedido;
@@ -155,6 +158,7 @@ void asignarPedidos(NodoRepartidor* &lista, ColaPedidos* colas[CANT_ZONAS]){
         return;
     }
     NodoRepartidor* nodo = buscarInsertarRepartidor(lista, r);
+    transferirPedidos(nodo->listaPedido, colas[r.zona-1], cantPedidos);
     cout<<"Pedidos asignados correctamente."<<endl;
 }
 
@@ -197,6 +201,42 @@ NodoRepartidor* buscarInsertarRepartidor(NodoRepartidor* &lista, Repartidor rep)
     }
     else
         return repLista;
+}
+
+// Inserta un pedido ordenado por su importe
+void insertarPedidoPorImporte(NodoPedido*&lista, Pedido pedido){
+    NodoPedido *n, *p, *ant;
+    n = new NodoPedido;
+    n->dato = pedido;
+    p = lista;
+    while(p != NULL && p->dato.importe < pedido.importe){
+        ant = p;
+        p = p->sig;
+    }
+    n->sig = p;
+    if(p != lista) ant->sig = n;
+    else lista = n;
+}
+
+// Saca un pedido de una cola
+void desencolarPedido(ColaPedidos*&cola, Pedido &pedido){
+    NodoPedido *p = cola->pri;
+    pedido = p->dato;
+    cola->pri = p->sig;
+    delete p;
+    if(cola->pri == NULL) cola->ult = NULL;
+}
+
+// Transfiere pedidos de una cola a la sublista de un repartidor
+void transferirPedidos(NodoPedido*&listaPedido, ColaPedidos*&pedidos, int cantPedidos){
+    int contador = 1;
+    Pedido p;
+    while (pedidos->pri != NULL && contador <= cantPedidos){
+        desencolarPedido(pedidos, p);
+        insertarPedidoPorImporte(listaPedido, p);
+        cout<<"asigno pedido de importe: "<<p.importe<<endl;
+        contador++;
+    }
 }
 
 void mostrar(NodoRepartidor* listaRep){
