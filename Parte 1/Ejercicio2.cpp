@@ -6,7 +6,7 @@ using namespace std;
 
 // Comercio: No contiene el rubro, para no incluirlo en los archivos.
 struct Comercio{
-    string nombre;
+    char nombre[20];
     unsigned zona;
 };
 
@@ -42,7 +42,7 @@ void generar_archivos(Comercio c[MAX_COMERCIOS], int rubros[MAX_COMERCIOS]){
     // Obtener la cantidad de comercios de cada rubro
     Comercio temp = c[0];
     int i = 0;
-    while (temp.nombre != "*"){
+    while (strcmp(temp.nombre, "*") != 0){
         lengths[rubros[i] - 1]++;
         i++;
         temp = c[i];
@@ -51,7 +51,7 @@ void generar_archivos(Comercio c[MAX_COMERCIOS], int rubros[MAX_COMERCIOS]){
     Comercio pizzerias[lengths[0]], heladerias[lengths[1]], bebidas[lengths[2]], parrillas[lengths[3]];
     temp = c[0];
     i = 0;
-    while (temp.nombre != "*") {
+    while (strcmp(temp.nombre, "*") != 0) {
         switch (rubros[i]) {
             case 1: pizzerias[j[0]] = temp; break;
             case 2: heladerias[j[1]] = temp; break;
@@ -97,7 +97,7 @@ void ordenar(Comercio comercios[], int length){
     for (i = 0; i < length - 1; i++){
         min = i;
         for (j = i+1; j < length; j++)
-            if (comercios[j].nombre < comercios[min].nombre)
+            if (strcmp(comercios[j].nombre, comercios[min].nombre) < 0)
                 min = j;
         swap(&comercios[min], &comercios[i]);
     }
@@ -131,7 +131,7 @@ void llenar_comercios(Comercio comercios[MAX_COMERCIOS], int rubros[MAX_COMERCIO
     cout << "Rubros: 1 para Pizzeria, 2 para Heladeria, 3 para Bebidas y 4 para Parrilla." << endl;
     cout << "-- Nuevo Comercio --" << endl << "Ingrese el nombre: ";
     cin >> comercios[k].nombre;
-    while (comercios[k].nombre != "*"){
+    while (strcmp(comercios[k].nombre, "*") != 0){
         cout << "Ingrese el rubro: ";
         cin >> rubros[k];
         cout << "Ingrese la zona: ";

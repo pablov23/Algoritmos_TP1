@@ -1,18 +1,25 @@
 #include<iostream>
-#include<string.h>
 
 using namespace std;
 
-struct Pedido {
-    string domicilio;
+struct Comercio{
+    char nombre[20];
     unsigned zona;
-    string comercio;
+};
+struct NodoComercio
+{
+    Comercio dato;
+    unsigned pedidos;
+    NodoComercio* izq;
+    NodoComercio* der;
+};
+
+struct Pedido {
+    char domicilio[20];
+    unsigned zona;
+    char comercio[20];
     unsigned rubro;
     unsigned importe;
-};
-struct Comercio{
-    string nombre;
-    unsigned zona;
 };
 struct NodoPedido{
     Pedido dato;
@@ -39,20 +46,21 @@ struct NodoRepartidor
 const unsigned CANT_ZONAS = 6;
 
 // Parte 1
-void recibirPedido(FILE* archivos[4], ColaPedidos* colas[CANT_ZONAS]);
+void recibirPedido(FILE* archivos[4], ColaPedidos* colas[CANT_ZONAS], NodoComercio*&arbol);
 void encolarPedido(ColaPedidos*&cola, Pedido pedido);
-int getZonaComercio(FILE* archivo, string nombre);
+int getComercio(FILE* archivo, char nombre[20], Comercio &comercio);
 Pedido ingresarDatosPedido();
 // Parte 2
 void asignarPedidos(NodoRepartidor*&lista, ColaPedidos* colas[CANT_ZONAS]);
-int getRepartidor(string nombreRep, Repartidor &repartidor);
+int getRepartidor(char nombreRep[20], Repartidor &repartidor);
 NodoRepartidor* buscarInsertarRepartidor(NodoRepartidor* &lista, Repartidor rep);
 void insertarPedidoPorImporte(NodoPedido*&lista, Pedido pedido);
 void desencolarPedido(ColaPedidos*&cola, Pedido &pedido);
 void transferirPedidos(NodoPedido*&listaPedido, ColaPedidos*&pedidos, int cantPedidos);
 // Partes 3 y 4
 void mostrar(NodoRepartidor* listaRep);
-void salir();
+void insertarComercio(NodoComercio*&raiz, Comercio c);
+void listarArbol(NodoComercio* raiz);
 
 int main(){
     // Abro los archivos y verifico
@@ -63,6 +71,8 @@ int main(){
     for (unsigned i = 0; i<CANT_ZONAS; i++) colas[i] = new ColaPedidos;
     // Lista de repartidores
     NodoRepartidor* listaRep = NULL;
+    // Arbol de comercios (raiz)
+    NodoComercio* arbol = NULL;
     // Le muestro un menu de opciones al usuario
     unsigned opcion = 1;
     while (opcion >= 1 && opcion <=3){
@@ -71,10 +81,10 @@ int main(){
         cout<<"Ingrese un numero del 1 al 4: ";
         cin>>opcion;
         switch (opcion){
-            case 1: recibirPedido(archivos, colas); break;
+            case 1: recibirPedido(archivos, colas, arbol); break;
             case 2: asignarPedidos(listaRep, colas); break;
             case 3: mostrar(listaRep); break;
-            case 4: salir(); break;
+            case 4: listarArbol(arbol); break;
             default: break;
         }
     }
@@ -84,14 +94,16 @@ int main(){
 }
 
 // Ingresa un nuevo pedido
-void recibirPedido(FILE* archivos[4], ColaPedidos* colas[CANT_ZONAS]){
+void recibirPedido(FILE* archivos[4], ColaPedidos* colas[CANT_ZONAS], NodoComercio*&arbol){
     Pedido p = ingresarDatosPedido();
-    int zona = getZonaComercio(archivos[p.rubro-1], p.comercio);
+    Comercio c;
+    int zona = getComercio(archivos[p.rubro-1], p.comercio, c);
     cout<<"-----------------------------------------------------------------"<<endl;
-    if (zona == -1) {
+    if (zona == -1 || (unsigned) zona != p.zona) {
         cout<<"Error: el comercio no esta inscripto. Ingrese nuevamente los datos."<<endl;
     } else {
         encolarPedido(colas[zona-1], p);
+        insertarComercio(arbol, c);
         cout<<"Pedido recibido!"<<endl;
     }
 }
@@ -124,7 +136,7 @@ Pedido ingresarDatosPedido(){
 }
 
 // Busca un comercio en un archivo (con busqueda binaria) y devuelve su zona
-int getZonaComercio(FILE* archivo, string nombre){
+int getComercio(FILE* archivo, char nombre[20], Comercio &comercio){
     Comercio c;
     unsigned desde = 0, hasta, medio;
     fseek(archivo,0,SEEK_END);
@@ -133,9 +145,11 @@ int getZonaComercio(FILE* archivo, string nombre){
         medio = (desde + hasta) / 2;
         fseek(archivo, medio*sizeof(Comercio), SEEK_SET);
         fread(&c, sizeof(Comercio), 1, archivo);
-        // La funcion .compare devuelve -1, 0, ó 1 dependiento el orden alfabetico
-        if (nombre.compare(c.nombre) == 0) return c.zona;
-        else if (nombre.compare(c.nombre) < 0) hasta=medio-1;
+        int comp = strcmp(nombre, c.nombre);
+        if (comp == 0) {
+            comercio = c;
+            return c.zona;
+        } else if (comp < 0) hasta=medio-1;
         else desde=medio+1;
     }
     return -1;
@@ -143,7 +157,7 @@ int getZonaComercio(FILE* archivo, string nombre){
 
 // Asigna pedidos a un repartidor
 void asignarPedidos(NodoRepartidor* &lista, ColaPedidos* colas[CANT_ZONAS]){
-    string nombreRep;
+    char nombreRep[20];
     int cantPedidos;
     cout<<"Ingrese nombre del repartidor: ";
     cin>> nombreRep;
@@ -162,13 +176,13 @@ void asignarPedidos(NodoRepartidor* &lista, ColaPedidos* colas[CANT_ZONAS]){
 }
 
 // Busca un repartidor en el archivo (si no lo encuentra devuelve -1)
-int getRepartidor(string nombreRep, Repartidor &repartidor){
+int getRepartidor(char nombreRep[20], Repartidor &repartidor){
     Repartidor r;
     FILE* archivo = fopen("Repartidores.dat", "rb");
     if (archivo == NULL) return -1;
     fread(&r, sizeof(Repartidor), 1, archivo);
     while (!feof(archivo)) {
-        if (r.nombre == nombreRep) {
+        if (strcmp(nombreRep, r.nombre) == 0) {
             repartidor = r;
             fclose(archivo);
             return 1;
@@ -206,7 +220,7 @@ void insertarPedidoPorImporte(NodoPedido*&lista, Pedido pedido){
     n = new NodoPedido;
     n->dato = pedido;
     p = lista;
-    while(p != NULL && p->dato.importe < pedido.importe){
+    while(p != NULL && p->dato.importe > pedido.importe){
         ant = p;
         p = p->sig;
     }
@@ -254,6 +268,35 @@ void mostrar(NodoRepartidor* listaRep){
     }
 }
 
-void salir(){
+// Inserta un comercio en un arbol (si encuentra uno igual, le suma 1 pedido)
+void insertarComercio(NodoComercio*&raiz, Comercio c){
+    NodoComercio *p, *ant, *n = new NodoComercio;
+    n->dato = c;
+    n->pedidos = 1;
+    n->izq = n->der = NULL;
+    p = raiz;
+    while(p != NULL) {
+        ant = p;
+        int comp = strcmp(c.nombre, p->dato.nombre);
+        if (comp == 0 && c.zona == p->dato.zona) {
+            p->pedidos++; return;
+        }
+        if(comp < 0) p = p->izq;
+        else p = p->der;
+    }
+    if(raiz==NULL) {
+        raiz = n;
+    } else {
+        if(strcmp(c.nombre, ant->dato.nombre) < 0) ant->izq = n;
+        else ant->der = n;
+    }
+}
 
+// Mostrar el contenido del arbol INORDER
+void listarArbol(NodoComercio* raiz){
+    if(raiz != NULL){
+        listarArbol(raiz->izq);
+        cout<<raiz->dato.nombre<<" (zona "<<raiz->dato.zona<<"): "<<raiz->pedidos<<" pedidos."<<endl;
+        listarArbol(raiz->der);
+    }
 }
