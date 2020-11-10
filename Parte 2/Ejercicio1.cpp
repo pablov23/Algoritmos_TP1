@@ -69,7 +69,11 @@ int main(){
     if (archivos[0]==NULL || archivos[1]==NULL || archivos[2]==NULL || archivos[3]==NULL) return 1;
     // Creo un vector con colas (una para cada zona), y lo inicializo
     ColaPedidos* colas[CANT_ZONAS];
-    for (unsigned i = 0; i<CANT_ZONAS; i++) colas[i] = new ColaPedidos;
+    for (unsigned i = 0; i<CANT_ZONAS; i++) {
+        colas[i] = new ColaPedidos;
+        colas[i]->pri = NULL;
+        colas[i]->ult = NULL;
+    }
     // Lista de repartidores
     NodoRepartidor* listaRep = NULL;
     // Arbol de comercios (raiz)
@@ -171,9 +175,13 @@ void asignarPedidos(NodoRepartidor* &lista, ColaPedidos* colas[CANT_ZONAS]){
         cout<<"Error: el repartidor no esta inscripto."<<endl;
         return;
     }
-    NodoRepartidor* nodo = buscarInsertarRepartidor(lista, r);
-    transferirPedidos(nodo->listaPedido, colas[r.zona-1], cantPedidos);
-    cout<<"Pedidos asignados correctamente."<<endl;
+    if (colas[r.zona-1]->pri != NULL) {
+        NodoRepartidor* nodo = buscarInsertarRepartidor(lista, r);
+        transferirPedidos(nodo->listaPedido, colas[r.zona-1], cantPedidos);
+        cout<<"Pedidos asignados correctamente."<<endl;
+    } else {
+        cout<<"No hay pedidos para asignar."<<endl;
+    }
 }
 
 // Busca un repartidor en el archivo (si no lo encuentra devuelve -1)
@@ -204,6 +212,7 @@ NodoRepartidor* buscarInsertarRepartidor(NodoRepartidor* &lista, Repartidor rep)
     if(repLista == NULL || strcmp(repLista->dato.nombre, rep.nombre) > 0){
         NodoRepartidor* n = new NodoRepartidor;
         n->dato = rep;
+        n->listaPedido = NULL;
         n->sigRep = repLista;
         if(repLista != lista)
             ant->sigRep = n;
